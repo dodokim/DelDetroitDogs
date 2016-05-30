@@ -154,7 +154,8 @@ class NetworkBase:
     # those without blue along with an opacity corresponding to SE  #
     #################################################################
     def NetworkBase_addVisualAttributes(self):
-        MAX_STRAY = 10
+        max_stray = max(max([len(self.NetworkBase_getStray(agent)) for 
+                    agent in self.Agents]), 1)
 
         # Iterate through each of the nodes present in the graph and
         # finds respective agent
@@ -162,10 +163,8 @@ class NetworkBase:
             curAgent = self.Agents[agentID]
 
             el = self.NetworkBase_getAgent(agentID).norm_education_level
-            stray = len(self.NetworkBase_getStray(agentID))/MAX_STRAY
-
-            if int(el) == 1: el = 1
-            if int(stray) == 1: stray = 1
+            stray = len(self.NetworkBase_getStray(agentID))/max_stray
+            print(stray)
 
             # Marks depressed agents as red nodes and blue otherwise
             self.G.node[agentID]['color'] = el

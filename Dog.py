@@ -9,8 +9,9 @@ import numpy as np
 MIN_GESTATION = 5
 
 class Dog:
-    def __init__(self, owner, loc):
+    def __init__(self, owner, network, loc):
         self.owner = owner
+        self.network = network
         self.loc = loc
         
         self.prob_rand_reproduce = random.random()
@@ -43,10 +44,10 @@ class Dog:
             if self.owner is not None:
                 self.owner.Agent_new_dog()
             else:
-                dog = Dog(None, self.loc)
-                self.owner.network.networkBase.dogs.append(dog) 
-                self.owner.network.networkBase.num_dogs += 1
-                self.owner.network.networkBase.NetworkBase_addStray(
+                dog = Dog(None, self.network, self.loc)
+                self.network.networkBase.dogs.append(dog) 
+                self.network.networkBase.num_dogs += 1
+                self.network.networkBase.NetworkBase_addStray(
                 	self.loc, dog)
             
             self.prob_rand_reproduce = 0

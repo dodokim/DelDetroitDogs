@@ -164,7 +164,7 @@ class Agent:
         self.Agent_update_stray()
 
     def Agent_new_dog(self):
-        dog = Dog(self, self.agentID)
+        dog = Dog(self, self.network, self.agentID)
         self.dogs.append(dog)
         self.num_dogs += 1
 
@@ -189,10 +189,12 @@ class Agent:
             dog.is_steralized = True
         
     def Agent_update_attitude(self):
-        delta_attitude = self.norm_education_level/(1 + 
+        SCALE = .25
+        delta_attitude = SCALE * self.norm_education_level/(1 + 
             self.num_stray_dogs)
-        delta_attitude *= self.network.networkBase.\
+        delta_attitude *= SCALE * self.network.networkBase.\
             NetworkBase_mean_attitude(self)
+        delta_attitude -= SCALE
 
         self.attitude += delta_attitude
         self.normal_attitude = self.Agent_normalize(self.attitude)
@@ -201,15 +203,19 @@ class Agent:
         self.p_acquire = self.normal_attitude/(1 + self.num_dogs)
 
     def Agent_update_probrelease(self):
-        self.p_release = np.exp(-self.normal_attitude)
+        self.p_release = np.exp(-self.normal_attitude)/2
 
     def Agent_update_education(self):
-        delta_education = self.network.networkBase.\
+        DOG_IMPACT = .0050
+        NETWORK_IMPACT = .0005
+
+        delta_education = DOG_IMPACT * self.network.networkBase.\
             NetworkBase_mean_education(self)
-        delta_education += self.network.networkBase.\
+        delta_education += NETWORK_IMPACT * self.network.networkBase.\
             dog_education * (1 - (self.norm_education_level - .5) ** 2)
 
         self.education_level += delta_education
+        print(self.education_level)
         self.norm_education_level = self.Agent_normalize(self.education_level)
 
     def Agent_update_steralize(self):
